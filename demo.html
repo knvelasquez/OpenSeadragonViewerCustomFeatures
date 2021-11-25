@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <meta charset='utf-8'>
+
+        <title>OpenSeadragon Scalebar</title>
+
+        <!-- NIST template CSS -->
+        <link rel="stylesheet" href="static/css/NISTStyle.css">
+        <link rel="stylesheet" href="static/css/NISTPages.css">
+
+        <link rel='stylesheet' 
+              type='text/css'
+              media='screen'
+              href='css/style.css'/>
+
+        <script src="openseadragon/openseadragon.min.js"></script>
+        <!--<script src="openseadragon/openseadragon-scalebar.js"></script>
+        <script src="openseadragon/openseadragonScreenshot.js"></script>-->
+    </head>
+
+    <body>
+        <section class="demo">
+            <div id="osd" class="openseadragon">
+            </div>
+            <script type="text/javascript">
+                var viewer = new OpenSeadragon.Viewer({
+                    id: "osd",
+                    prefixUrl: "openseadragon/images/",
+                    showNavigator: false,
+                    wrapHorizontal: false,
+                    wrapVertical: false,
+                    zoomPerScroll: 1.2,
+                    minZoomImageRatio: 0.5,
+                    tileSources: "https://learn.mghpathology.org/api/slides/DZI20-170-Case-2_1.dzi",
+                    degrees: 90,
+                    // Show rotation buttons
+                    showRotationControl: true,
+                    // Enable touch rotation on tactile devices
+                    gestureSettingsTouch: {
+                        pinchRotate: true
+                    }
+                });
+                /*viewer.scalebar({
+                    type: OpenSeadragon.ScalebarType.MAP,
+                    pixelsPerMeter: 1e7,
+                    minWidth: "75px",
+                    location: OpenSeadragon.ScalebarLocation.BOTTOM_LEFT,
+                    xOffset: 5,
+                    yOffset: 10,
+                    stayInsideImage: true,
+                    color: "rgb(150, 150, 150)",
+                    fontColor: "rgb(100, 100, 100)",
+                    backgroundColor: "rgba(255, 255, 255, 0.5)",
+                    fontSize: "small",
+                    barThickness: 2
+                });
+                // viewer will be your OpenSeaDragon viewer object
+                viewer.screenshot({
+                    showOptions: true, // Default is false
+                    keyboardShortcut: 'p', // Default is null
+                    showScreenshotControl: true // Default is true
+                });*/
+                /*viewer.zoomLevels({
+                    levels: [0.1, 0.5, 1]
+                });*/
+            </script>
+        </section>
+    </body>
+</html>

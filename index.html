@@ -1,0 +1,196 @@
+<html>
+    <head>
+        <meta charset='utf-8'>
+
+        <title>OpenSeadragon Scalebar</title>
+
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="/resources/demos/style.css">
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+        <!-- NIST template CSS -->
+        <link rel="stylesheet" href="static/css/NISTStyle.css">
+        <link rel="stylesheet" href="static/css/NISTPages.css">
+
+        <link rel='stylesheet' 
+              type='text/css'
+              media='screen'
+              href='css/style.css'/>
+
+        <script src="openseadragon/customViewer.bundle.min.js"></script>
+        <script src="openseadragon/openseadragon-scalebar.js"></script>
+        <script src="openseadragon/openseadragonScreenshot.js"></script>     
+        <script src="openseadragon/openseadragon-smartScrollZoom.js"></script> 
+        <style>
+            .control-zoom-slider-wrapper {
+                position:absolute;
+                bottom:33px;
+                left:0;
+                margin:16px;
+                width:72px;
+                height:203px;
+                background:hsla(0,0%,100%,.6);
+                z-index:2;
+                pointer-events:none
+            }
+            .control-zoom-slider-wrapper.wrapper-not-dragging {
+                pointer-events:all
+            }
+            .control-zoom-slider-wrapper .slider-relative-wrapper {
+                height:100%;
+                position:relative;
+                width:100%
+            }
+            .control-zoom-slider-wrapper .slider-relative-wrapper .slider-background {
+                position:absolute;
+                left:23px;
+                top:10px;
+                width:2px;
+                height:183px;
+                background-color:#2771c9
+            }
+            .control-zoom-slider-wrapper .slider-relative-wrapper .slider-pip {
+                width:11px;
+                height:11px;
+                border-radius:5px;
+                border:2px solid #2771c9;
+                background-color:#fff;
+                position:absolute;
+                pointer-events:all;
+                left:-5px
+            }
+            .control-zoom-slider-wrapper .slider-relative-wrapper .slider-pip.slider-pip.slider-pip-selected {
+                color:transparent;
+                background-color:#2771c9;
+                z-index:2
+            }
+            .control-zoom-slider-wrapper .slider-relative-wrapper .slider-pip.slider-pip.slider-pip-selected:hover {
+                -webkit-transform:scaleX(1.5) scaleY(1.5);
+                transform:scaleX(1.5) scaleY(1.5)
+            }
+            .control-zoom-slider-wrapper .slider-relative-wrapper .slider-pip-label {
+                font-family:Roboto;
+                font-style:normal;
+                font-weight:500;
+                font-size:12px;
+                line-height:14px;
+                position:absolute;
+                left:11px
+            }
+            .control-zoom-slider-wrapper.wrapper-not-dragging {
+                pointer-events: all;
+            }
+        </style> 
+    </head>
+    <body>        
+        <section class="demo">            
+            <div id="osd" class="openseadragon">
+                <div class="control-zoom-slider-wrapper">
+                    <div class="slider-relative-wrapper">
+                        <div class="slider-background">
+                            <span class="slider-pip slider-pip-selected" style="top:0px;"></span>
+                            <span class="slider-pip" style="top: 0px;"></span>
+                            <span class="slider-pip" style="top: 36px;"></span>
+                            <span class="slider-pip" style="top: 73px;"></span>
+                            <span class="slider-pip" style="top: 117px;"></span>
+                            <span class="slider-pip" style="top: 145px;"></span>
+                            <span class="slider-pip" style="top: 173px;"></span>
+                            <span class="slider-pip-label" style="top: 0px;">40x</span>
+                            <span class="slider-pip-label" style="top: 36px;">20x</span>
+                            <span class="slider-pip-label" style="top: 73px;">10x</span>
+                            <span class="slider-pip-label" style="top: 117px;">4x</span>
+                            <span class="slider-pip-label" style="top: 145px;">2x</span>
+                            <span class="slider-pip-label" style="top: 173px;">1x</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="slider"></div>
+            </div>
+            <script type="text/javascript">
+                $(function() {
+                    $("#slider").slider({
+                        min: -180,
+                        max: 180,
+                        slide: function(event, ui) {
+                            viewer.viewer.viewport.setRotation(ui.value);
+                        }
+                    });
+                    sliderDragToggle=!1
+                    $(".control-zoom-slider-wrapper").mousedown(function(e){
+                        sliderDragToggle = !0
+                    })
+                    $(".control-zoom-slider-wrapper").mouseup(function(e){
+                        sliderDragToggle = !1
+                        $(this).removeClass("wrapper-not-dragging")
+                    })
+                    $(".control-zoom-slider-wrapper").mousemove(function(e){
+                        if (!0 === sliderDragToggle) {
+                            let t = $(".slider-pip-label");//this.$refs.pips;
+                            //for (let i in t) {
+                            for (let i=0;i<t.length;i++) {
+                            let t = $($(".slider-pip-label")[i])//this.pips[i],
+                            n = $(".slider-pip-label")[i]//this.$refs.pips[i],
+                            s = n.getBoundingClientRect();
+                            s.top - 2 < e.clientY && s.top + 13 > e.clientY && $(t[0]).text()/*this.$emit('input', t.value)*/
+                            if(s.top - 2 < e.clientY && s.top + 13 > e.clientY){
+                                //$(t[0]).css("top",e.clientY)
+                                $(".slider-pip-selected").css("top",parseInt($(t[0]).css("top")))
+                            }                            
+                            }
+                        }
+                    })
+                    $(".control-zoom-slider-wrapper").mousedown(function(){
+                        $(this).addClass("wrapper-not-dragging")
+                    })
+                });
+                const host = 'wish.mghpathology.org';
+                var selectedCase = 'DZI20-170-Case-2_1.mrxs';
+                
+                var viewer = new EDMViewer.EDMViewer({
+                    socketURL: `ws://${host}/tiles`,
+                    containerID: 'osd',
+                    useEXIF: true,
+                    dziUrl: `http://${host}/dzi/${selectedCase}`,
+                    showRotationControl: true,
+                    showNavigator: false,
+                    wrapHorizontal: false,
+                    wrapVertical: false,
+                    zoomPerScroll: 1.2,
+                    minZoomImageRatio: 0.5,
+                    degrees: 90                   
+                });
+                   window.setTimeout(function(){
+                        /*viewer.viewer.scalebar({
+                            type: OpenSeadragon.ScalebarType.MAP,
+                            pixelsPerMeter: 1e7,
+                            minWidth: "75px",
+                            location: OpenSeadragon.ScalebarLocation.BOTTOM_LEFT,
+                            xOffset: 5,
+                            yOffset: 10,
+                            stayInsideImage: true,
+                            color: "rgb(150, 150, 150)",
+                            fontColor: "rgb(100, 100, 100)",
+                            backgroundColor: "rgba(255, 255, 255, 0.5)",
+                            fontSize: "small",
+                            barThickness: 2
+                        });
+                        // viewer will be your OpenSeaDragon viewer object
+                        viewer.viewer.screenshot({
+                            showOptions: true, // Default is false
+                            keyboardShortcut: 'p', // Default is null
+                            showScreenshotControl: true // Default is true
+                        });  */
+                        /*viewer.viewer.zoomLevels({
+                            levels: [1, 5, 10]
+                        });*/
+                        viewer.viewer.smartScrollZoom({
+                            minScrolls: 4,
+                           
+                        });
+                        //viewer.viewer.smartScrollZoom.toggleEnable();
+                   },2000)                                                         
+            </script>                     
+        </section>
+    </body>
+</html>
